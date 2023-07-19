@@ -1,6 +1,8 @@
 import java.util.HashMap
 import java.util.StringJoiner
 
+
+
 fun main(args: Array<String>) {
 
     println("Hello World!")
@@ -168,11 +170,19 @@ fun main(args: Array<String>) {
 
 
 
+    //Function
+    test()
+
+    println(mySum(5,3))
+
+}
 
 
+//Function
+fun test(){
+    println("Test Function")
+}
 
-
-
-
-
+fun mySum(a : Int, b : Int) : Int{
+   return a + b;
 }
