@@ -1,6 +1,6 @@
 package com.enesaksu.kotlinoopcalismasi
 
-class Usser {
+class Usser : People{
 
     //Property
     var name : String? = null

@@ -1,6 +1,6 @@
 package com.enesaksu.kotlinoopcalismasi
 
-class Musician(name: String?, instrument: String?, age: Int?) {
+open class Musician(name: String?, instrument: String?, age: Int?) {
 
     //Encapsulation
     var name : String? = null
