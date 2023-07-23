@@ -29,14 +29,35 @@ class MainActivity : AppCompatActivity() {
         arrayList.add(eifel)
         arrayList.add(pissa)
         arrayList.add(colesseom)
-
-
+        arrayList.add(eifel)
+        arrayList.add(pissa)
+        arrayList.add(colesseom)
+        arrayList.add(eifel)
+        arrayList.add(pissa)
+        arrayList.add(colesseom)
+        arrayList.add(eifel)
+        arrayList.add(pissa)
+        arrayList.add(colesseom)
+        arrayList.add(eifel)
+        arrayList.add(pissa)
+        arrayList.add(colesseom)
+        arrayList.add(eifel)
+        arrayList.add(pissa)
+        arrayList.add(colesseom)
 
 
         val layoutManager : RecyclerView.LayoutManager = LinearLayoutManager(this)
         binding.recyclerView.layoutManager = layoutManager
         landMarkAdaptor = LandMarkAdaptor(arrayList)
         binding.recyclerView.adapter = landMarkAdaptor
+
+
+        binding.recyclerView.setOnClickListener{position ->
+            val intent = Intent(this,MainActivity2::class.java)
+            startActivity(intent)
+
+        }
+
 
 
 

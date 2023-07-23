@@ -16,6 +16,18 @@ class MainActivity2 : AppCompatActivity() {
         setContentView(view)
 
 
+        val intent = intent
+        //val selectedLandMark = intent.getSerializableExtra("landmark")  as LandMark
+        val selectedLandMark = Singleton.chosenLandMark
+
+        selectedLandMark?.let {
+            binding.imageView.setImageResource(selectedLandMark!!.image)
+            binding.txtName.text = selectedLandMark.name
+            binding.txtCountry.text = selectedLandMark.country
+        }
+
+
+
 
 
 

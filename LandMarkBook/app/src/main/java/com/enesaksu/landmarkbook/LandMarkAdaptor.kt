@@ -1,8 +1,10 @@
 package com.enesaksu.landmarkbook
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View.OnClickListener
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.enesaksu.landmarkbook.databinding.ActivityMain2Binding
@@ -10,7 +12,7 @@ import com.enesaksu.landmarkbook.databinding.ActivityMainBinding
 import com.enesaksu.landmarkbook.databinding.ResyclerlayoutBinding
 import com.google.android.filament.View
 
-class LandMarkAdaptor(private val data: ArrayList<LandMark>, )
+class LandMarkAdaptor(private val data: ArrayList<LandMark>)
     : RecyclerView.Adapter<LandMarkAdaptor.ViewHolder>() {
 
 
@@ -31,6 +33,13 @@ class LandMarkAdaptor(private val data: ArrayList<LandMark>, )
         holder.binding.recyTxtNameCount.text = data[position].country
         holder.binding.recyImageView.setImageResource(data[position].image)
 
+        holder.itemView.setOnClickListener{
+            val intent = Intent(holder.itemView.context,MainActivity2::class.java)
+            //intent.putExtra("landmark",data.get(position))
+
+            Singleton.chosenLandMark = data.get(position)
+            holder.itemView.context.startActivity(intent)
+        }
 
     }
 
