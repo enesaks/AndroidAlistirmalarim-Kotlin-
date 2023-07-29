@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "77096829207",
+    "project_id": "intagramclone-kotlin",
+    "storage_bucket": "intagramclone-kotlin.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:77096829207:android:c652854aa368fb00403752",
+        "android_client_info": {
+          "package_name": "com.enesaksu.instagramclone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "77096829207-006j8b5ii0kvrc9ln67g8qhlrv8hdff2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBykmCrULRtTAs66YrUFwEIIP6wPwQpb8c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "77096829207-006j8b5ii0kvrc9ln67g8qhlrv8hdff2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
