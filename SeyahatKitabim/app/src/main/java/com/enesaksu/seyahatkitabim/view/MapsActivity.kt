@@ -47,6 +47,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
     private lateinit var db : PlaceDatabase
     private lateinit var placeDao: PlaceDao
     val compositeDisposable = CompositeDisposable()
+    var placefromMain: Place? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +76,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
             //.allowMainThreadQueries()
             .build()
         placeDao = db.placeDao()
+
+        binding.saveBtn.isEnabled = false
     }
 
 
@@ -82,52 +85,82 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
         mMap = googleMap
         mMap.setOnMapLongClickListener(this)
 
-        locationManager = this.getSystemService(LOCATION_SERVICE) as LocationManager
-        locationListener = object : LocationListener {
-            override fun onLocationChanged(location: Location) {
-                trackBoolean = sharedPreferences.getBoolean("trackBoolean",false)
-                if (!trackBoolean!!) {
-                    var latLng = LatLng(location.latitude, location.longitude)
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
-                    sharedPreferences.edit().putBoolean("trackBoolean",true).apply()
+        val intent = intent
+        val info = intent.getStringExtra("info")
+
+        if(info.equals("new")){
+            binding.saveBtn.visibility = View.VISIBLE
+            binding.deleteBtn.visibility = View.GONE
+            binding.editTextText.setText("")
+
+
+            locationManager = this.getSystemService(LOCATION_SERVICE) as LocationManager
+            locationListener = object : LocationListener {
+                override fun onLocationChanged(location: Location) {
+                    trackBoolean = sharedPreferences.getBoolean("trackBoolean",false)
+                    if (!trackBoolean!!) {
+                        var latLng = LatLng(location.latitude, location.longitude)
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+                        sharedPreferences.edit().putBoolean("trackBoolean",true).apply()
+                    }
                 }
             }
-        }
 
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ){
-            //denied
-            if(ActivityCompat.shouldShowRequestPermissionRationale(
+            if (ContextCompat.checkSelfPermission(
                     this,
                     Manifest.permission.ACCESS_FINE_LOCATION
-                )
+                ) != PackageManager.PERMISSION_GRANTED
             ){
-                Snackbar.make(
-                    binding.root,
-                    "Permsisson needed for location",
-                    Snackbar.LENGTH_INDEFINITE
-                ).setAction("Give PErmisson"){
+                //denied
+                if(ActivityCompat.shouldShowRequestPermissionRationale(
+                        this,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    )
+                ){
+                    Snackbar.make(
+                        binding.root,
+                        "Permsisson needed for location",
+                        Snackbar.LENGTH_INDEFINITE
+                    ).setAction("Give PErmisson"){
+                        //Request Permisson
+                        permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                    }.show()
+                }else{
                     //Request Permisson
                     permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-                }.show()
+                }
+
             }else{
-                //Request Permisson
-                permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                //Permisson granted
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0f,locationListener)
+                val lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                if (lastLocation != null){
+                    val lastUserLocation = LatLng(lastLocation.latitude, lastLocation.longitude)
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastUserLocation, 15f))
+                }
+                mMap.isMyLocationEnabled = true
             }
 
-        }else{
-            //Permisson granted
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0f,locationListener)
-            val lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-            if (lastLocation != null){
-                val lastUserLocation = LatLng(lastLocation.latitude, lastLocation.longitude)
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastUserLocation, 15f))
+        } else{
+            mMap.clear()
+
+            placefromMain = intent.getSerializableExtra("selectedPlace") as Place?
+            placefromMain?.let {
+                val latLng = LatLng(it.latitude,it.longitude)
+                mMap.addMarker(MarkerOptions().position(latLng).title(it.name))
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,15f))
+
+                binding.editTextText.setText(it.name)
+                binding.editTextText.isEnabled = false
+
+                binding.saveBtn.visibility = View.GONE
+                binding.deleteBtn.visibility = View.VISIBLE
+
             }
-            mMap.isMyLocationEnabled = true
+
+
         }
+
 
 
 
@@ -136,6 +169,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
     }
 
     override fun onMapLongClick(latLng: LatLng) {
+        binding.saveBtn.isEnabled = true
+
+
         mMap.clear()
         mMap.addMarker(MarkerOptions().position(latLng))
         selectedLongitude = latLng.longitude
@@ -184,6 +220,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
 
     }
     private fun delete(view : View){
+
+        placefromMain?.let {
+
+            compositeDisposable.add(
+                placeDao.delete(it)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(this::handleResponse)
+            )
+        }
 
     }
 
