@@ -48,9 +48,9 @@ class MainActivity : AppCompatActivity() {
 
             if (task.isSuccessful){
                 val user = auth.currentUser
-                Toast.makeText(this@MainActivity,"Sign is Succsesful",Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity,task.exception?.localizedMessage,Toast.LENGTH_SHORT).show()
             }else {
-                Toast.makeText(this@MainActivity, "Authentication failed.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity, task.exception?.localizedMessage , Toast.LENGTH_SHORT).show()
             }
 
         }
