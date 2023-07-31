@@ -52,6 +52,7 @@ class FeedActivty : AppCompatActivity() {
 
                         val documents = value.documents
                         postArrayList.clear()
+
                         for (document in documents){
                             val comment = document.get("comment") as String
                             val title= document.get("Title") as String
